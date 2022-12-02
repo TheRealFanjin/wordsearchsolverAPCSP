@@ -1,7 +1,5 @@
 import PySimpleGUI as sg
 
-word = 'foe'
-
 
 def solve():
     # init variables
@@ -142,14 +140,6 @@ def solve():
         row_count += 1
 
 
-inputLayout = [[sg.Text('Enter the word search:')],
-          [sg.InputText()],
-          [sg.Submit()]]
-
-
-window = sg.Window('Word Search Solver', inputLayout)
-
-
 while True:
     inputLayout = [[sg.Text('Enter the word search:')],
                    [sg.InputText()],
@@ -160,12 +150,26 @@ while True:
         break
     if event == 'Submit':
         board = values[0].split(' ')
+        window.close()
+        break
+
+while True:
+    inputLayout1 = [[sg.Text('Enter the word to find:')],
+                    [sg.InputText()],
+                    [sg.Button('Search')]]
+    window1 = sg.Window('Word Search Solver', inputLayout1)
+    event1, values1 = window1.read()
+    if event1 == sg.WIN_CLOSED:
+        window1.close()
+        break
+    if event1 == 'Search':
+        word = values1[0]
         while True:
-            inputLayout1 = [[sg.Text(solve())],
+            inputLayout2 = [[sg.Text(solve())],
                             [sg.Button('OK')]]
-            window1 = sg.Window('Word Search Solver', inputLayout1, modal=True)
-            event1, values1 = window1.read()
-            if event1 == sg.WIN_CLOSED or event1 == 'OK':
-                window1.close()
+            window2 = sg.Window('Word Search Solver', inputLayout2, modal=True)
+            event2, values2 = window2.read()
+            if event2 == sg.WIN_CLOSED or event2 == 'OK':
+                window2.close()
                 break
-window.close()
+    window.close()
