@@ -138,8 +138,10 @@ def solve():
             else:
                 return f'({vertical_length - row[::-1].index(word)}, {(horizontal_length - row_count + 1) - (len(word) - 1)})'
         row_count += 1
+    return 'Word not found'
 
 
+stopped = False
 while True:
     inputLayout = [[sg.Text('Enter the word search:')],
                    [sg.InputText()],
@@ -147,22 +149,48 @@ while True:
     window = sg.Window('Word Search Solver', inputLayout)
     event, values = window.read()
     if event == sg.WIN_CLOSED:
+        stopped = True
         break
     if event == 'Submit':
         board = values[0].split(' ')
+        issue = False
+        issue_reason = ''
+        for index in range(0, len(board)):
+            if not board[index].isalpha():
+                issue = True
+                issue_reason = 'The word search must only contain alphabetic characters!'
+            if index == len(board) - 1:
+                break
+            if len(board[index]) != len(board[index + 1]):
+                issue = True
+                issue_reason = 'Lines must be the same length!'
+        if issue:
+            while True:
+                formatPopupLayout = [[sg.Text(issue_reason)],
+                                     [sg.Button('OK')]]
+                formatPopup = sg.Window('Word Search Solver', formatPopupLayout, modal=True)
+                fPEvent, fpValues = formatPopup.read()
+                if fPEvent == sg.WIN_CLOSED or fPEvent == 'OK':
+                    formatPopup.close()
+                    break
+            window.close()
+            continue
         window.close()
         break
 
+
 while True:
+    if stopped:
+        break
     inputLayout1 = [[sg.Text('Enter the word to find:')],
                     [sg.InputText()],
-                    [sg.Button('Search')]]
+                    [sg.Submit()]]
     window1 = sg.Window('Word Search Solver', inputLayout1)
     event1, values1 = window1.read()
     if event1 == sg.WIN_CLOSED:
         window1.close()
         break
-    if event1 == 'Search':
+    if event1 == 'Submit':
         word = values1[0]
         while True:
             inputLayout2 = [[sg.Text(solve())],
@@ -171,5 +199,6 @@ while True:
             event2, values2 = window2.read()
             if event2 == sg.WIN_CLOSED or event2 == 'OK':
                 window2.close()
+                window1.close()
                 break
     window.close()
