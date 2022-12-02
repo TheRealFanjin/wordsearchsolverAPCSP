@@ -158,12 +158,12 @@ while True:
         stopped = True
         break
     if event == '-IN-':
-        if values['-IN-']:
+        if not values['-IN-'].replace(' ', '') == '':
             word_search_input_window['Submit'].update(disabled=False)
         else:
             word_search_input_window['Submit'].update(disabled=True)
     if event == 'Submit':
-        board = values['-IN-']
+        board = values['-IN-'].strip().split()
         issue = False
         issue_reason = ''
         for inputLine in range(0, len(board)):
@@ -184,7 +184,6 @@ while True:
                 if fPEvent == Sg.WIN_CLOSED or fPEvent == 'OK':
                     formatPopup.close()
                     break
-            word_search_input_window.close()
             continue
         word_search_input_window.close()
         break
@@ -202,7 +201,7 @@ while True:
         window1.close()
         break
     if event1 == 'Submit':
-        word = values1[0]
+        word = values1[0].replace(' ', '')
         while True:
             try:
                 rowNum, col, direction = solve()
