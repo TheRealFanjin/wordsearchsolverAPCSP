@@ -75,14 +75,14 @@ def solve():
     row_count = 1
     for row in board:
         if word in row:
-            return row_count, row.inputLine(word) + 1, 0
+            return row_count, row.index(word) + 1, 0
         row_count += 1
 
     # horizontal, right to left
     row_count = 1
     for row in board:
         if word in row[::-1]:
-            return row_count, len(row) - (row[::-1].inputLine(word)), 1
+            return row_count, len(row) - (row[::-1].index(word)), 1
         row_count += 1
 
     # vertical, top to down
