@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import PySimpleGUI as Sg
 
 
 def solve():
@@ -7,170 +7,174 @@ def solve():
     horizontal_length = len(board[0])
 
     # initialize vertical board
-    verticalBoard = []
+    vertical_board = []
     for i in range(0, horizontal_length):
-        verticalBoard.append('')
+        vertical_board.append('')
     for row in board:
         row_count = 0
         for columnNum in range(0, horizontal_length):
-            verticalBoard[row_count] += row[columnNum]
+            vertical_board[row_count] += row[columnNum]
             row_count += 1
 
     # init down and left
-    downLeftDiagonalBoard = []
+    south_east_diagonal = []
     for index in range(horizontal_length + vertical_length - 1):
-        downLeftDiagonalBoard.append('')
+        south_east_diagonal.append('')
     for i in range(horizontal_length):
         x = 0
         y = i
         while True:
             try:
-                downLeftDiagonalBoard[i] += board[x][::-1][y]
+                south_east_diagonal[i] += board[x][::-1][y]
                 x += 1
                 y += 1
             except IndexError:
-                while len(downLeftDiagonalBoard[i]) != vertical_length:
-                    downLeftDiagonalBoard[i] += '0'
+                while len(south_east_diagonal[i]) != vertical_length:
+                    south_east_diagonal[i] += '0'
                 break
-    for i in range(1, len(verticalBoard[0])):
+    for i in range(1, len(vertical_board[0])):
         x = 0
         y = i
         while True:
             try:
-                downLeftDiagonalBoard[i + horizontal_length - 1] += verticalBoard[::-1][x][y]
+                south_east_diagonal[i + horizontal_length - 1] += vertical_board[::-1][x][y]
                 x += 1
                 y += 1
             except IndexError:
                 break
     # init down and right
-    downRightDiagonalBoard = []
+    south_west_diagonal = []
     for index in range(horizontal_length + vertical_length - 1):
-        downRightDiagonalBoard.append('')
+        south_west_diagonal.append('')
     for i in range(horizontal_length):
         x = 0
         y = i
         while True:
             try:
-                downRightDiagonalBoard[i] += board[x][y]
+                south_west_diagonal[i] += board[x][y]
                 x += 1
                 y += 1
             except IndexError:
-                while len(downRightDiagonalBoard[i]) != vertical_length:
-                    downRightDiagonalBoard[i] += '0'
+                while len(south_west_diagonal[i]) != vertical_length:
+                    south_west_diagonal[i] += '0'
                 break
-    for i in range(1, len(verticalBoard[0])):
+    for i in range(1, len(vertical_board[0])):
         x = 0
         y = i
         while True:
             try:
-                downRightDiagonalBoard[i + horizontal_length - 1] += verticalBoard[x][y]
+                south_west_diagonal[i + horizontal_length - 1] += vertical_board[x][y]
                 x += 1
                 y += 1
             except IndexError:
-                while len(downRightDiagonalBoard[i + horizontal_length - 1]) != vertical_length:
-                    downRightDiagonalBoard[i + horizontal_length - 1] += '0'
+                while len(south_west_diagonal[i + horizontal_length - 1]) != vertical_length:
+                    south_west_diagonal[i + horizontal_length - 1] += '0'
                 break
 
     # horizontal, left to right
     row_count = 1
     for row in board:
         if word in row:
-            return f'({row_count}, {row.index(word) + 1})'
+            return row_count, row.inputLine(word) + 1, 0
         row_count += 1
 
     # horizontal, right to left
     row_count = 1
     for row in board:
         if word in row[::-1]:
-            return f'({row_count}, {len(row)-(row[::-1].index(word))})'
+            return row_count, len(row) - (row[::-1].inputLine(word)), 1
         row_count += 1
 
     # vertical, top to down
     row_count = 1
-    for row in verticalBoard:
+    for row in vertical_board:
         if word in row:
-            return f'({row.index(word) + 1}, {row_count})'
+            return row.index(word) + 1, row_count, 2
         row_count += 1
 
     # vertical, bottom to top
     row_count = 1
-    for row in verticalBoard:
+    for row in vertical_board:
         if word in row[::-1]:
-            return f'({len(row)-(row[::-1].index(word))}, {row_count})'
+            return len(row)-(row[::-1].index(word)), row_count, 3
         row_count += 1
 
     # down right diagonal, left to right
     row_count = 1
-    for row in downRightDiagonalBoard:
+    for row in south_west_diagonal:
         if word in row:
             if row_count > horizontal_length:
-                return f'({row.index(word) + 1}, {row_count - horizontal_length + (row.index(word))})'
+                return row.index(word) + 1, row_count - horizontal_length + row.index(word), 4
             else:
-                return f'({row.index(word) + 1}, {row_count + (row.index(word))})'
+                return row.index(word) + 1, row_count + (row.index(word)), 4
         row_count += 1
     # down right diagonal, right to left
     row_count = 1
-    for row in downRightDiagonalBoard:
+    for row in south_west_diagonal:
         if word in row[::-1]:
             if row_count > horizontal_length:
-                return f'({vertical_length - row[::-1].index(word)}, {(row_count - horizontal_length) + (vertical_length - row[::-1].index(word))})'
+                return vertical_length - row[::-1].index(word), \
+                       (row_count - horizontal_length) + (vertical_length - row[::-1].index(word)), \
+                       5
 
             else:
-                return f'({vertical_length - row[::-1].index(word)}, {(row_count - 1) + len(word)})'
+                return vertical_length - row[::-1].index(word), (row_count - 1) + len(word), 5
         row_count += 1
 
     # down left diagonal, right to left
     row_count = 1
-    for row in downLeftDiagonalBoard:
+    for row in south_east_diagonal:
         if word in row:
             if row_count > horizontal_length:
-                return f'({row_count - horizontal_length + 1}, {horizontal_length - (row.index(word))})'
+                return row_count - horizontal_length + 1, horizontal_length - (row.index(word)), 6
             else:
-                return f'({row.index(word) + 1}, {(horizontal_length - row_count + 1) + (row.index(word))})'
+                return row.index(word) + 1, (horizontal_length - row_count + 1) + (row.index(word)), 6
         row_count += 1
 
     # down left diagonal, left to right
     row_count = 1
-    for row in downLeftDiagonalBoard:
+    for row in south_east_diagonal:
         if word in row[::-1]:
             if row_count > horizontal_length:
-                return f'({vertical_length - row[::-1].index(word)}, {(horizontal_length - (row_count - horizontal_length) + 1) - (len(word) - 1)})'
+                return vertical_length - row[::-1].index(word), \
+                       (horizontal_length - (row_count - horizontal_length) + 1) - (len(word) - 1), \
+                       7
             else:
-                return f'({vertical_length - row[::-1].index(word)}, {(horizontal_length - row_count + 1) - (len(word) - 1)})'
+                return vertical_length - row[::-1].index(word), (horizontal_length - row_count + 1) - (len(word) - 1), 7
         row_count += 1
     return 'Word not found'
 
 
 stopped = False
 while True:
-    inputLayout = [[sg.Text('Enter the word search:')],
-                   [sg.InputText()],
-                   [sg.Submit()]]
-    window = sg.Window('Word Search Solver', inputLayout)
+    inputLayout = [[Sg.Text('Enter the word search:')],
+                   [Sg.InputText()],
+                   [Sg.Submit()]]
+    window = Sg.Window('Word Search Solver', inputLayout)
     event, values = window.read()
-    if event == sg.WIN_CLOSED:
+    if event == Sg.WIN_CLOSED:
         stopped = True
         break
     if event == 'Submit':
         board = values[0].split(' ')
         issue = False
         issue_reason = ''
-        for index in range(0, len(board)):
-            if not board[index].isalpha():
+        for inputLine in range(0, len(board)):
+            if not board[inputLine].isalpha():
                 issue = True
                 issue_reason = 'The word search must only contain alphabetic characters!'
-            if index == len(board) - 1:
+            if inputLine == len(board) - 1:
                 break
-            if len(board[index]) != len(board[index + 1]):
+            if len(board[inputLine]) != len(board[inputLine + 1]):
                 issue = True
                 issue_reason = 'Lines must be the same length!'
         if issue:
             while True:
-                formatPopupLayout = [[sg.Text(issue_reason)],
-                                     [sg.Button('OK')]]
-                formatPopup = sg.Window('Word Search Solver', formatPopupLayout, modal=True)
+                formatPopupLayout = [[Sg.Text(issue_reason)],
+                                     [Sg.Button('OK')]]
+                formatPopup = Sg.Window('Word Search Solver', formatPopupLayout, modal=True)
                 fPEvent, fpValues = formatPopup.read()
-                if fPEvent == sg.WIN_CLOSED or fPEvent == 'OK':
+                if fPEvent == Sg.WIN_CLOSED or fPEvent == 'OK':
                     formatPopup.close()
                     break
             window.close()
@@ -182,22 +186,49 @@ while True:
 while True:
     if stopped:
         break
-    inputLayout1 = [[sg.Text('Enter the word to find:')],
-                    [sg.InputText()],
-                    [sg.Submit()]]
-    window1 = sg.Window('Word Search Solver', inputLayout1)
+    inputLayout1 = [[Sg.Text('Enter the word to find:')],
+                    [Sg.InputText()],
+                    [Sg.Submit()]]
+    window1 = Sg.Window('Word Search Solver', inputLayout1)
     event1, values1 = window1.read()
-    if event1 == sg.WIN_CLOSED:
+    if event1 == Sg.WIN_CLOSED:
         window1.close()
         break
     if event1 == 'Submit':
         word = values1[0]
         while True:
-            inputLayout2 = [[sg.Text(solve())],
-                            [sg.Button('OK')]]
-            window2 = sg.Window('Word Search Solver', inputLayout2, modal=True)
+            try:
+                rowNum, col, direction = solve()
+                if direction == 0:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going horizontally left to right')],
+                                    [Sg.Button('OK')]]
+                elif direction == 1:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going horizontally right to left')],
+                                    [Sg.Button('OK')]]
+                elif direction == 2:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going vertically top to bottom')],
+                                    [Sg.Button('OK')]]
+                elif direction == 3:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going vertically bottom to top')],
+                                    [Sg.Button('OK')]]
+                elif direction == 4:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going diagonally southeast')],
+                                    [Sg.Button('OK')]]
+                elif direction == 5:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going diagonally northwest')],
+                                    [Sg.Button('OK')]]
+                elif direction == 6:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going diagonally southwest')],
+                                    [Sg.Button('OK')]]
+                else:
+                    inputLayout2 = [[Sg.Text(f'({rowNum}, {col}) going northeast')],
+                                    [Sg.Button('OK')]]
+            except ValueError:
+                inputLayout2 = [[Sg.Text('Word not found')],
+                                [Sg.Button('OK')]]
+            window2 = Sg.Window('Word Search Solver', inputLayout2, modal=True)
             event2, values2 = window2.read()
-            if event2 == sg.WIN_CLOSED or event2 == 'OK':
+            if event2 == Sg.WIN_CLOSED or event2 == 'OK':
                 window2.close()
                 window1.close()
                 break
