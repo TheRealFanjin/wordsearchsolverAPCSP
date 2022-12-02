@@ -163,7 +163,7 @@ while True:
         else:
             word_search_input_window['Submit'].update(disabled=True)
     if event == 'Submit':
-        board = values[0].split(' ')
+        board = values['-IN-']
         issue = False
         issue_reason = ''
         for inputLine in range(0, len(board)):
