@@ -145,16 +145,23 @@ def solve():
     return 'Word not found'
 
 
+word_search_input_layout = [[Sg.Text('Enter the word search:')],
+                            [Sg.InputText(enable_events=True, key='-IN-')],
+                            [Sg.Submit(disabled=True, bind_return_key=False)]]
+word_search_input_window = Sg.Window('Word Search Solver', word_search_input_layout)
+
+
 stopped = False
 while True:
-    inputLayout = [[Sg.Text('Enter the word search:')],
-                   [Sg.InputText()],
-                   [Sg.Submit()]]
-    window = Sg.Window('Word Search Solver', inputLayout)
-    event, values = window.read()
+    event, values = word_search_input_window.read()
     if event == Sg.WIN_CLOSED:
         stopped = True
         break
+    if event == '-IN-':
+        if values['-IN-']:
+            word_search_input_window['Submit'].update(disabled=False)
+        else:
+            word_search_input_window['Submit'].update(disabled=True)
     if event == 'Submit':
         board = values[0].split(' ')
         issue = False
@@ -177,9 +184,9 @@ while True:
                 if fPEvent == Sg.WIN_CLOSED or fPEvent == 'OK':
                     formatPopup.close()
                     break
-            window.close()
+            word_search_input_window.close()
             continue
-        window.close()
+        word_search_input_window.close()
         break
 
 
@@ -232,4 +239,4 @@ while True:
                 window2.close()
                 window1.close()
                 break
-    window.close()
+    word_search_input_window.close()
