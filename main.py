@@ -1,4 +1,5 @@
 import PySimpleGUI as Sg
+import numpy as np
 
 
 def solve():
@@ -145,10 +146,10 @@ def solve():
     return 'Word not found'
 
 
-word_search_input_layout = [[Sg.Text('Enter the word search:')],
-                            [Sg.InputText(enable_events=True, key='-IN-')],
+word_search_input_layout = [[Sg.Text('Enter the word search using either spaces only or new lines only:')],
+                            [Sg.Multiline(size=(50, 20), enable_events=True, font='Courier', no_scrollbar=True, key='-IN-')],
                             [Sg.Submit(disabled=True, bind_return_key=False)]]
-word_search_input_window = Sg.Window('Word Search Solver', word_search_input_layout)
+word_search_input_window = Sg.Window('Word Search Solver', word_search_input_layout, resizable=True)
 
 
 stopped = False
@@ -163,7 +164,12 @@ while True:
         else:
             word_search_input_window['Submit'].update(disabled=True)
     if event == 'Submit':
-        board = values['-IN-'].strip().split()
+        tempBoard = values['-IN-'].strip().split('\n')
+        tempBoard1 = [line.split() for line in tempBoard]
+        length = max(map(len, tempBoard1))
+        y = np.array([xi + [None] * (length - len(xi)) for xi in tempBoard1])
+        board1 = y.flatten()
+        board = [x for x in board1 if x is not None]
         issue = False
         issue_reason = ''
         for inputLine in range(0, len(board)):
@@ -189,19 +195,26 @@ while True:
         break
 
 
+inputLayout1 = [[Sg.Text('Enter the word to find:')],
+                [Sg.InputText(enable_events=True, font='Courier', key='-WI-')],
+                [Sg.Submit(disabled=True)]]
+window1 = Sg.Window('Word Search Solver', inputLayout1)
+
+
 while True:
     if stopped:
         break
-    inputLayout1 = [[Sg.Text('Enter the word to find:')],
-                    [Sg.InputText()],
-                    [Sg.Submit()]]
-    window1 = Sg.Window('Word Search Solver', inputLayout1)
     event1, values1 = window1.read()
     if event1 == Sg.WIN_CLOSED:
         window1.close()
         break
+    if event1 == '-WI-':
+        if not values1['-WI-'].replace(' ', '') == '':
+            window1['Submit'].update(disabled=False)
+        else:
+            window1['Submit'].update(disabled=True)
     if event1 == 'Submit':
-        word = values1[0].replace(' ', '')
+        word = values1['-WI-'].replace(' ', '')
         while True:
             try:
                 rowNum, col, direction = solve()
@@ -236,6 +249,5 @@ while True:
             event2, values2 = window2.read()
             if event2 == Sg.WIN_CLOSED or event2 == 'OK':
                 window2.close()
-                window1.close()
                 break
     word_search_input_window.close()
