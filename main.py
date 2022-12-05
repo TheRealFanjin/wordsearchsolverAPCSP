@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow
 
 
 class MainWindow(QMainWindow):
-    def __int__(self):
+    def __init__(self):
         super().__init__()
         self.setWindowTitle("Word Search Solver")
 
