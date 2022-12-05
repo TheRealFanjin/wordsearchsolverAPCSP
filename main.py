@@ -1,6 +1,12 @@
-import PySimpleGUI as Sg
+from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow
 
-#test
+
+class MainWindow(QMainWindow):
+    def __int__(self):
+        super().__init__()
+        self.setWindowTitle("Word Search Solver")
+
+
 def search_word(grid, word):
     # Iterate over all possible starting positions in the grid
     for row in range(len(grid)):
@@ -42,103 +48,8 @@ def search_word(grid, word):
     return 'Word not found'
 
 
-word_search_input_layout = [[Sg.Text('Enter the word search by pressing enter after each row:')],
-                            [Sg.Multiline(size=(50, 20), enable_events=True, font='Courier', no_scrollbar=True, key='-IN-')],
-                            [Sg.Submit(disabled=True, bind_return_key=False)]]
-word_search_input_window = Sg.Window('Word Search Solver', word_search_input_layout, resizable=True)
+app = QApplication([])
+window = MainWindow()
+window.show()
+app.exec()
 
-
-stopped = False
-board = []
-while True:
-    event, values = word_search_input_window.read()
-    if event == Sg.WIN_CLOSED:
-        stopped = True
-        break
-    if event == '-IN-':
-        if not values['-IN-'].replace(' ', '') == '':
-            word_search_input_window['Submit'].update(disabled=False)
-        else:
-            word_search_input_window['Submit'].update(disabled=True)
-    if event == 'Submit':
-        board = [row.lower().replace(' ', '') for row in values['-IN-'].strip().split('\n')]
-        issue = False
-        issue_reason = ''
-        for inputLine in range(0, len(board)):
-            if not board[inputLine].isalpha():
-                issue = True
-                issue_reason = 'The word search must only contain alphabetic characters!'
-            if inputLine == len(board) - 1:
-                break
-            if len(board[inputLine]) != len(board[inputLine + 1]):
-                issue = True
-                issue_reason = 'Lines must be the same length!'
-        if issue:
-            while True:
-                formatPopupLayout = [[Sg.Text(issue_reason)],
-                                     [Sg.Button('OK')]]
-                formatPopup = Sg.Window('Word Search Solver', formatPopupLayout, modal=True)
-                fPEvent, fpValues = formatPopup.read()
-                if fPEvent == Sg.WIN_CLOSED or fPEvent == 'OK':
-                    formatPopup.close()
-                    break
-            continue
-        word_search_input_window.close()
-        break
-
-
-inputLayout1 = [[Sg.Text('Enter the word to find:')],
-                [Sg.InputText(enable_events=True, font='Courier', key='-WI-')],
-                [Sg.Submit(disabled=True)]]
-window1 = Sg.Window('Word Search Solver', inputLayout1)
-
-
-while True:
-    if stopped:
-        break
-    event1, values1 = window1.read()
-    if event1 == Sg.WIN_CLOSED:
-        window1.close()
-        break
-    if event1 == '-WI-':
-        if not values1['-WI-'].replace(' ', '') == '':
-            window1['Submit'].update(disabled=False)
-        else:
-            window1['Submit'].update(disabled=True)
-    if event1 == 'Submit':
-        while True:
-            try:
-                rowNum, colNum, direction = search_word(board, values1['-WI-'].lower().replace(' ', ''))
-                if direction == 0:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going horizontally left to right')],
-                                    [Sg.Button('OK')]]
-                elif direction == 1:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going horizontally right to left')],
-                                    [Sg.Button('OK')]]
-                elif direction == 2:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going vertically top to bottom')],
-                                    [Sg.Button('OK')]]
-                elif direction == 3:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going vertically bottom to top')],
-                                    [Sg.Button('OK')]]
-                elif direction == 4:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going diagonally southeast')],
-                                    [Sg.Button('OK')]]
-                elif direction == 5:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going diagonally northwest')],
-                                    [Sg.Button('OK')]]
-                elif direction == 6:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going diagonally southwest')],
-                                    [Sg.Button('OK')]]
-                else:
-                    inputLayout2 = [[Sg.Text(f'({rowNum}, {colNum}) going northeast')],
-                                    [Sg.Button('OK')]]
-            except ValueError:
-                inputLayout2 = [[Sg.Text('Word not found')],
-                                [Sg.Button('OK')]]
-            window2 = Sg.Window('Word Search Solver', inputLayout2, modal=True)
-            event2, values2 = window2.read()
-            if event2 == Sg.WIN_CLOSED or event2 == 'OK':
-                window2.close()
-                break
-    word_search_input_window.close()
