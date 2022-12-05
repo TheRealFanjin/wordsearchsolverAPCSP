@@ -1,6 +1,6 @@
 import PySimpleGUI as Sg
 
-
+#test
 def search_word(grid, word):
     # Iterate over all possible starting positions in the grid
     for row in range(len(grid)):
