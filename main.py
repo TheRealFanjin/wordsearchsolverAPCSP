@@ -2,10 +2,10 @@ import PySimpleGUI as Sg
 
 
 def search_word(grid, word):
-    # iterate over all possible starting positions in the grid
+    # iterate over all letters in the grid
     for row in range(len(grid)):
         for col in range(len(grid[row])):
-            # check if the current position is the starting letter of the word
+            # check if the current position is the first letter of the word
             if grid[row][col] == word[0]:
                 # check all eight directions for the remaining letters of the word
                 for row_vector, col_vector in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]:
