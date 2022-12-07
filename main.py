@@ -60,7 +60,7 @@ while True:
         stopped = True
         break
 
-    # if there is change detected in the input box
+    # if there is change detected in the input box, enable the submit button
     if event == '-IN-':
         if not values['-IN-'].replace(' ', '') == '':
             word_search_input_window['Submit'].update(disabled=False)
